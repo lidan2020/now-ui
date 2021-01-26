@@ -206,10 +206,14 @@ class _SettingsState extends State<Settings> {
                             ),
                             //User pic
                             CircleAvatar(
-                                child: Image.asset(imagesPath + "logo.png",
-                                    width: 38.0),
-                                radius: 28.0,
-                                backgroundColor: Colors.transparent),
+                              child: Text("shared".toUpperCase(),
+                                  style: TextStyle(
+                                      color: appMainColor,
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: .3,
+                                      backgroundColor: Colors.transparent)),
+                            ),
                             //Sync
                             GestureDetector(
                               onTap: () => print("Sync pressed"),

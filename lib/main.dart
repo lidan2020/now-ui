@@ -1,8 +1,9 @@
 import 'dart:core';
+import 'package:Project_News/ui/mainWd.dart';
+import 'package:Project_News/ui/story/comments.dart';
 import 'package:flutter/material.dart';
 
 import 'inc/init.dart';
-import 'ui/discover.dart' show Discover;
 import 'ui/story/story.dart' show Story;
 import 'ui/overview.dart' show Overview;
 import 'ui/channels/channels.dart' show Channels;
@@ -42,8 +43,10 @@ class _MainState extends State<Main> {
   void initState() {
     super.initState();
     //_getUserOnBoard();
+    loggedIn = true;
   }
 
+  //Navigator.popAndPushNamed(context, "/Discover");
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -63,12 +66,14 @@ class _MainState extends State<Main> {
                       BoxShadow(color: Colors.black26, blurRadius: 5.0)
                     ]))),
         home: loggedIn
-            ? Discover()
+            // ? Discover()
+            // : /*_userOnBoardStatus == 1 ? Login() :*/ OnBoard(),
+            ? Login()
             : /*_userOnBoardStatus == 1 ? Login() :*/ OnBoard(),
         //initialRoute: loggedIn ? '/' : _userOnBoardStatus == 1 ? "/Login" : "/OnBoard",//initRoute value must be ready before anything, when change condition app must restart to make changes! - use home instead.
         routes: {
-          "/OnBoard": (context) => OnBoard(),
-          "/Discover": (context) => Discover(),
+          //"/OnBoard": (context) => OnBoard(),
+          //"/Discover": (context) => Discover(),
           "/Login": (context) => Login(),
           "/Register": (context) => Register(),
           "/ForgetPassword": (context) => ForgetPassword(),
@@ -80,7 +85,11 @@ class _MainState extends State<Main> {
           "/Settings": (context) => Settings(),
           "/ContactUs": (context) => Email(),
           "/Bookmarks": (context) => Bookmarks(),
+          "/Comments": (context) => Comments(),
+          "/MainWd": (context) => MainWd(),
           "/Profile": (context) => Profile()
         });
   }
 }
+
+// https://google.github.io/charts/flutter/gallery.html

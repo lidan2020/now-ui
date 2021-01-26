@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'dart:ui';
+import 'package:Project_News/common/httpResponse.dart';
+import 'package:Project_News/model/temperatureData.dart';
 import 'package:flutter/material.dart';
 import '../inc/init.dart';
 
@@ -8,21 +11,38 @@ class Overview extends StatefulWidget {
 }
 
 class _OverviewState extends State<Overview> {
+  GlobalKey<_OverviewState> textKey = GlobalKey();
+
   Widget _getChannelsPercents(
-      {String channel = "Unkown", double percent = 0, String percentString}) {
+      {String channel = "Unkown",
+      double percent = 0,
+      String percentString,
+      String pTime}) {
     return Container(
         padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
         child: Column(children: <Widget>[
           Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(channel,
+                // 警员照片
+                Image.asset(imagesUserPath + "1.jpg",
+                    width: 40.0, fit: BoxFit.fill),
+                // 警员姓名
+                Text("姓名：" + channel,
                     style: TextStyle(
                         fontSize: 12.0,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: 1.0)),
-                Text(percentString + '%',
+                // 测温时间
+                Text(pTime,
+                    style: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 1.0)),
+                // 体温
+                Text(percentString + '℃',
                     style: TextStyle(
                         fontSize: 12.0,
                         fontWeight: FontWeight.bold,
@@ -41,6 +61,79 @@ class _OverviewState extends State<Overview> {
               ]))
         ]));
   }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 访问服务器体温数据
+    _userList = getUserList();
+    _getTemperatureList = fetchTemperatureDataList("");
+
+    ///循环执行
+    _timer = Timer.periodic(Duration(seconds: 60), (Timer t) => addValue());
+    // ///间隔1秒
+    // _timer = Timer.periodic(Duration(milliseconds: 1000), (timer) {
+    //   ///自增
+    //   curentTimer++;
+
+    //   ///到5秒后停止
+    //   if (curentTimer == 5) {
+    //     // _timer.cancel();
+    //     curentTimer = 0;
+    //     // 访问服务器体温数据
+    //     _getTemperatureList = fetchTemperatureData();
+    //     // 执行刷新
+    //     //_globalKey.currentState.onPressed();
+
+    //   }
+    // });
+  }
+
+  @override
+  void dispose() {
+    // 取消定时访问温度数据
+    _timer.cancel();
+    super.dispose();
+  }
+
+  //================================================
+  // 温度显示 方法实现
+  Future<GetTemperatureData> _getTemperatureList;
+  List<TemperatureData> _userList;
+
+  //温度定时访问
+  Timer _timer;
+
+  ///当前的时间
+  int curentTimer = 0;
+
+  GlobalKey _globalKey = GlobalKey(); // 1. GlobalKey生成
+
+  // 警员温度显示
+  // userData     : 警员名称信息
+  // temperature  : 警员体温
+  // pTime        : 测温时间
+  List<Widget> _userListView(List<TemperatureData> temperatureDataList) {
+    return temperatureDataList
+        .map((f) => _getChannelsPercents(
+            channel: f.sn,
+            percent: f.wd <= 0 ? 0 : f.wd,
+            percentString: f.wd.toString(),
+            pTime: f.pTime))
+        .toList();
+  }
+
+  void addValue() {
+    setState(() {
+      // 访问服务器体温数据
+      _userList = getUserList();
+      _getTemperatureList = fetchTemperatureDataList("689464703098034");
+
+      //curentTimer++;
+    });
+  }
+  //================================================
 
   @override
   Widget build(BuildContext context) {
@@ -82,51 +175,61 @@ class _OverviewState extends State<Overview> {
                 child: Column(children: <Widget>[
                   Container(
                     margin: EdgeInsets.only(top: 40.0, bottom: 10.0),
-                    child: Text("OVERVIEW",
+                    child: Text("警员体温数据",
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 22.0,
                             letterSpacing: 1.0)),
                   ),
-                  Text("What you are reading the most",
+                  Text("体温监控，实时为你提供警员体温情况！",
                       style: TextStyle(color: Colors.white54, fontSize: 12.0)),
                   Expanded(
                       child: Padding(
                           padding: EdgeInsets.all(25.0),
                           //Percents
+                          //====体温显示==================================
                           child: ListView(
                               physics: NeverScrollableScrollPhysics(),
                               children: <Widget>[
-                                _getChannelsPercents(
-                                    channel: "FASHION",
-                                    percent: .34,
-                                    percentString: "34"),
-                                _getChannelsPercents(
-                                    channel: "ENVIRONMENT",
-                                    percent: .28,
-                                    percentString: "28"),
-                                _getChannelsPercents(
-                                    channel: "TECHNOLOGY",
-                                    percent: .12,
-                                    percentString: "12"),
-                                _getChannelsPercents(
-                                    channel: "AUTO",
-                                    percent: .10,
-                                    percentString: "10"),
-                                _getChannelsPercents(
-                                    channel: "FINANCES",
-                                    percent: .08,
-                                    percentString: "8"),
-                                _getChannelsPercents(
-                                    channel: "SCIENCE",
-                                    percent: .05,
-                                    percentString: "5"),
-                                _getChannelsPercents(
-                                    channel: "SPORT",
-                                    percent: .03,
-                                    percentString: "3")
-                              ])))
-                ]))));
+                                //==============================
+                                // 回调函数 返回值赋值
+                                RepaintBoundary(
+                                  key: _globalKey,
+                                  child: FutureBuilder<GetTemperatureData>(
+                                    future: _getTemperatureList,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.done) {
+                                        if (snapshot.hasData) {
+                                          //==============================
+                                          return Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: _userListView(
+                                                  snapshot.data.data)
+                                              // _getChannelsPercents(
+                                              //     channel: "警员000002",
+                                              //     percent: .34,
+                                              //     percentString: "34"),
+                                              );
+                                          //==============================
+                                        }
+                                      }
+                                      return CircularProgressIndicator();
+                                    },
+                                  ),
+
+                                  //==============================
+                                )
+                              ])
+                          //===体温显示结束===========================
+                          ))
+                ])
+
+                //===网络数据回显===================================
+                )));
   }
 }
+
+class HttpResponse {}

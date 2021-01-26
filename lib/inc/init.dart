@@ -7,11 +7,12 @@ import '../account/login.dart' show Login;
 final Color appMainColor = Color.fromRGBO(249, 99, 50, 1.0);
 final Color appSecColor = Color.fromRGBO(236, 93, 47, 1.0);
 final String imagesPath = "assets/images/";
+final String imagesUserPath = "assets/user/";
 final double appBarIconScale = 1.8;
 
 bool loggedIn = false;
 
-Size screenSize(Window window) {
+Size screenSize(window) {
   final _screenSize = MediaQueryData.fromWindow(window).size;
   return _screenSize;
 }
@@ -79,79 +80,98 @@ Widget getDrawer(context) {
                       child: Column(children: <Widget>[
                     //Pages
                     Expanded(
-                      child: Padding(
-                          padding: EdgeInsets.only(top: 25.0, bottom: 25.0),
-                          child: ListView(
-                              physics: NeverScrollableScrollPhysics(),
-                              children: <Widget>[
-                                _getDrawerListTile(
-                                    image: "news.png",
-                                    semanticLabel: "News Icon",
-                                    title: "NEWS",
-                                    onTap: () => Navigator.popAndPushNamed(
-                                        context, "/Discover")),
-                                _getDrawerListTile(
-                                    image: "channels.png",
-                                    semanticLabel: "Channels Icon",
-                                    title: "CHANNELS",
-                                    onTap: () => Navigator.popAndPushNamed(
-                                        context, "/Channels")),
-                                _getDrawerListTile(
-                                    image: "bookmarks.png",
-                                    semanticLabel: "Bookmarks Icon",
-                                    title: "BOOKMARKS",
-                                    onTap: () {
-                                      Navigator.popAndPushNamed(
-                                          context, "/Bookmarks");
-                                    }),
-                                _getDrawerListTile(
-                                    image: "overview.png",
-                                    semanticLabel: "Overview Icon",
-                                    title: "OVERVIEW",
-                                    onTap: () => Navigator.popAndPushNamed(
-                                        context, "/Overview")),
-                                _getDrawerListTile(
-                                    image: "calendar.png",
-                                    semanticLabel: "Calendar Icon",
-                                    title: "CALENDAR"),
-                                _getDrawerListTile(
-                                    image: "timeline.png",
-                                    semanticLabel: "Timeline Icon",
-                                    title: "TIMELINE",
-                                    onTap: () {
-                                      Navigator.popAndPushNamed(
-                                          context, "/Timeline");
-                                    }),
-                                _getDrawerListTile(
-                                    image: "profile.png",
-                                    semanticLabel: "Profile Icon",
-                                    title: "PROFILE",
-                                    onTap: () {
-                                      Navigator.popAndPushNamed(
-                                          context, "/Profile");
-                                    }),
-                                _getDrawerListTile(
-                                    image: "widgets.png",
-                                    semanticLabel: "Widgets Icon",
-                                    title: "WIDGETS"),
-                                _getDrawerListTile(
-                                    image: "settings.png",
-                                    semanticLabel: "Settings Icon",
-                                    title: "SETTINGS",
-                                    onTap: () {
-                                      Navigator.popAndPushNamed(
-                                          context, "/Settings");
-                                    }),
-                                _getDrawerListTile(
-                                    image: "contact.png",
-                                    semanticLabel: "Contact Icon",
-                                    title: "CONTACT US",
-                                    onTap: () {
-                                      Navigator.popAndPushNamed(
-                                          context, "/ContactUs");
-                                    })
-                              ]))
-                    ),
+                        child: Padding(
+                            padding: EdgeInsets.only(top: 25.0, bottom: 25.0),
+                            child: ListView(
+                                physics: NeverScrollableScrollPhysics(),
+                                children: <Widget>[
+                                  // _getDrawerListTile(
+                                  //     image: "news.png",
+                                  //     semanticLabel: "News Icon",
+                                  //     title: "NEWS",
+                                  //     onTap: () => Navigator.popAndPushNamed(
+                                  //         context, "/Discover")),
+                                  // _getDrawerListTile(
+                                  //     image: "channels.png",
+                                  //     semanticLabel: "Channels Icon",
+                                  //     title: "主页",
+                                  //     onTap: () => Navigator.popAndPushNamed(
+                                  //         context, "/Channels")),
+                                  _getDrawerListTile(
+                                      image: "channels.png",
+                                      semanticLabel: "Channels Icon",
+                                      title: "主页",
+                                      onTap: () => Navigator.popAndPushNamed(
+                                          context, "/Bookmarks")),
+                                  _getDrawerListTile(
+                                      image: "channels.png",
+                                      semanticLabel: "Channels Icon",
+                                      title: "测试主页",
+                                      onTap: () => Navigator.popAndPushNamed(
+                                          context, "/MainWd")),
+                                  // _getDrawerListTile(
+                                  //     image: "bookmarks.png",
+                                  //     semanticLabel: "Bookmarks Icon",
+                                  //     title: "BOOKMARKS",
+                                  //     onTap: () {
+                                  //       Navigator.popAndPushNamed(
+                                  //           context, "/Bookmarks");
+                                  //     }),
+                                  _getDrawerListTile(
+                                      image: "overview.png",
+                                      semanticLabel: "Overview Icon",
+                                      title: "体温监控",
+                                      onTap: () => Navigator.popAndPushNamed(
+                                          context, "/Overview")),
+                                  // _getDrawerListTile(
+                                  //     image: "calendar.png",
+                                  //     semanticLabel: "Calendar Icon",
+                                  //     title: "CALENDAR"),
+                                  // _getDrawerListTile(
+                                  //     image: "timeline.png",
+                                  //     semanticLabel: "Timeline Icon",
+                                  //     title: "TIMELINE",
+                                  //     onTap: () {
+                                  //       Navigator.popAndPushNamed(
+                                  //           context, "/Timeline");
+                                  //     }),
+                                  // _getDrawerListTile(
+                                  //     image: "profile.png",
+                                  //     semanticLabel: "Profile Icon",
+                                  //     title: "PROFILE",
+                                  //     onTap: () {
+                                  //       Navigator.popAndPushNamed(
+                                  //           context, "/Profile");
+                                  //     }),
+                                  _getDrawerListTile(
+                                      image: "widgets.png",
+                                      semanticLabel: "Widgets Icon",
+                                      title: "体温预警"),
+                                  _getDrawerListTile(
+                                      image: "gps.png",
+                                      semanticLabel: "Gps Icon",
+                                      title: "GPS情报",
+                                      onTap: () {
+                                        Navigator.popAndPushNamed(
+                                            context, "/Comments");
+                                      }),
+                                  _getDrawerListTile(
+                                      image: "settings.png",
+                                      semanticLabel: "Settings Icon",
+                                      title: "系统设置",
+                                      onTap: () {
+                                        Navigator.popAndPushNamed(
+                                            context, "/Settings");
+                                      }),
+                                  _getDrawerListTile(
+                                      image: "contact.png",
+                                      semanticLabel: "Contact Icon",
+                                      title: "联系我们",
+                                      onTap: () {
+                                        Navigator.popAndPushNamed(
+                                            context, "/ContactUs");
+                                      })
+                                ]))),
                     //User
                     Container(
                         //Some calculates here. get a coffee
@@ -175,7 +195,7 @@ Widget getDrawer(context) {
                                     //Logout
                                     GestureDetector(
                                       onTap: () => logout(context),
-                                      child: Text("LOG OUT",
+                                      child: Text("云杉 吉川",
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 14.0,
@@ -190,7 +210,7 @@ Widget getDrawer(context) {
                                           Navigator.popAndPushNamed(
                                               context, "/Profile");
                                         },
-                                        child: Text("Khaled Mohsen",
+                                        child: Text("版本 V1.00.00",
                                             style: TextStyle(
                                                 fontSize: 12.0,
                                                 color: Colors.white70)),
@@ -209,8 +229,9 @@ Widget getDrawer(context) {
                                         radius: 35.0,
                                         backgroundColor: Colors.transparent,
                                         child: Image.asset(
-                                            imagesPath + "logo.png",
-                                            width: 30.0)),
+                                            imagesPath + "waves.png",
+                                            fit: BoxFit.fill,
+                                            width: 45.0)),
                                   ))
                             ]))
                   ]))

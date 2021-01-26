@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../inc/init.dart';
 import 'story/story.dart' show Story;
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class Bookmarks extends StatefulWidget {
   @override
@@ -102,54 +103,117 @@ class _BookmarksState extends State<Bookmarks> {
             backgroundColor: appMainColor),
         body: Container(
             child: Column(children: <Widget>[
-          //UI Title
+          //温度曲线图
           Container(
-              width: screenSize(window).width,
-              height: 100.0,
-              color: appSecColor,
-              child: Center(
-                child: Text("bookmarks".toUpperCase(),
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2.0)),
-              )),
-          //Bookmarked items - Stories only for now
+            width: screenSize(window).width,
+            height: 300.0,
+            color: appSecColor,
+            child: new charts.LineChart(_getSeriesData(), animate: true),
+            //new charts.LineChart(_getSeriesData(), animate: true),
+            //new charts.PieChart(_createSampleData(), animate: true),
+          ),
+          Container(
+            width: screenSize(window).width,
+            height: 300.0,
+            color: appSecColor,
+            child: new charts.PieChart(_createSampleData(),
+                animate: true,
+                defaultRenderer: new charts.ArcRendererConfig(
+                    arcRendererDecorators: [
+                      new charts.ArcLabelDecorator(
+                          labelPosition: charts.ArcLabelPosition.outside)
+                    ])),
+          ),
+          //信息提示
           Expanded(
               child: ListView(children: <Widget>[
+            //======================================================================
             _getBookmarksStories(
-                title:
-                    "NASA goes to Mars: Astronauts could land on Red Planet by 2039",
-                source: "SPACE.com",
-                datetime: "Feb 27, 2020",
-                section: "section #1",
+                title: "姓名：XXX 体温超标请注意！",
+                source: "39℃",
+                datetime: "2021年1月20日",
+                section: "处理状态",
                 onTap: () => Navigator.push(context,
                     MaterialPageRoute(builder: (context) => Story(1)))),
-            _getBookmarksStories(
-                title: "Archaeologists discovered lost city in Honduran jungle",
-                source: "CNN",
-                datetime: "Apr 3, 2015",
-                section: "section #2",
-                onTap: () => Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Story()))),
-            _getBookmarksStories(
-                title:
-                    "The balloons that could fly tourists to the edge of space",
-                source: "CNN",
-                datetime: "Apr 1, 2015",
-                section: "section #3",
-                onTap: () => Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Story()))),
-            _getBookmarksStories(
-                title:
-                    "Praesent convallis posuere euismod Nulla sodales cras amet",
-                source: "BBC",
-                datetime: "Feb 10, 2020",
-                section: "section #4",
-                onTap: () => Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Story())))
+            //===================================================================
           ]))
         ])));
   }
+}
+
+_getSeriesData() {
+  List<charts.Series<SalesData, int>> series = [
+    charts.Series(
+        //dot color is fillcolorfn
+        fillColorFn: (SalesData series, _) =>
+            charts.MaterialPalette.green.shadeDefault,
+        //seriesColor: charts.ColorUtil.fromDartColor(Colors.red),
+
+        id: "Sales",
+        data: data,
+        patternColorFn: (SalesData series, _) => charts.MaterialPalette.white,
+        // areaColorFn: ((SalesData series, _) => charts.MaterialPalette.black),
+        // domainUpperBoundFn: (SalesData series, _) => series.domainUpper,
+        // domainLowerBoundFn: (SalesData series, _) => series.domainLower,
+        // measureUpperBoundFn: (SalesData series, _) => series.measureUpper,
+        // measureLowerBoundFn: (SalesData series, _) => series.measureLower,
+        domainFn: (SalesData series, _) => series.year,
+        measureFn: (SalesData series, _) => series.sales,
+        colorFn: (SalesData series, _) =>
+            charts.MaterialPalette.red.shadeDefault),
+  ];
+
+  return series;
+}
+
+final data = [
+  new SalesData(1, 36),
+  new SalesData(2, 36),
+  new SalesData(3, 37),
+  new SalesData(4, 35),
+  new SalesData(5, 39),
+  new SalesData(6, 35),
+  new SalesData(7, 38),
+  new SalesData(8, 36),
+  new SalesData(9, 36),
+  new SalesData(10, 36),
+  new SalesData(11, 36),
+  new SalesData(12, 36)
+];
+
+class SalesData {
+  final int year;
+  final int sales;
+
+  SalesData(this.year, this.sales);
+}
+
+//==============================
+//static List<charts.Series<LinearSales, int>>
+_createSampleData() {
+  final data = [
+    new LinearSales("体温正常", 10),
+    new LinearSales("异常", 1),
+    new LinearSales("值班", 25),
+    new LinearSales("外勤", 5),
+  ];
+
+  return [
+    new charts.Series<LinearSales, String>(
+      id: 'Sales',
+      domainFn: (LinearSales sales, _) => sales.year,
+      measureFn: (LinearSales sales, _) => sales.sales,
+      data: data,
+      // Set a label accessor to control the text of the arc label.
+      labelAccessorFn: (LinearSales row, _) => '${row.year}: ${row.sales}',
+    )
+  ];
+}
+
+/// Sample linear data type.
+class LinearSales {
+  final String year;
+  final int sales;
+
+  LinearSales(this.year, this.sales);
 }

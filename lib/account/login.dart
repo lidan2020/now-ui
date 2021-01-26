@@ -49,7 +49,7 @@ class _LoginState extends State<Login> {
     setState(() {
       loggedIn = true;
     });
-    Navigator.popAndPushNamed(context, "/Discover");
+    Navigator.popAndPushNamed(context, "/MainWd");
   }
 
   @override
@@ -119,7 +119,11 @@ class _LoginState extends State<Login> {
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Image.asset(imagesPath + "waves.png", scale: 2.0),
+                              Image.asset(imagesPath + "waves.png",
+                                  scale: 2.0,
+                                  width: 200,
+                                  height: 200,
+                                  fit: BoxFit.fill),
                               Padding(
                                 padding: EdgeInsets.only(top: 15.0),
                                 child: Image.asset(
@@ -151,7 +155,7 @@ class _LoginState extends State<Login> {
                               onEditingComplete: () => _focusPassword(),
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: isFocusedUsername ? '' : "Username",
+                                hintText: isFocusedUsername ? '' : "请输入警号",
                                 hintStyle: TextStyle(
                                     fontSize: 14.0, color: Colors.white),
                                 contentPadding: EdgeInsets.all(20.0),
@@ -181,7 +185,7 @@ class _LoginState extends State<Login> {
                               onEditingComplete: () => _submit(),
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: isFocusedPassword ? '' : "Password",
+                                hintText: isFocusedPassword ? '' : "请输入密码",
                                 hintStyle: TextStyle(
                                     fontSize: 14.0, color: Colors.white),
                                 contentPadding: EdgeInsets.all(20.0),
@@ -206,7 +210,7 @@ class _LoginState extends State<Login> {
                             child: RaisedButton(
                               padding: EdgeInsets.all(20.0),
                               onPressed: () => _submit(),
-                              child: Text("Get Started",
+                              child: Text("确  定",
                                   style: TextStyle(color: Colors.white)),
                               color: Color.fromRGBO(249, 99, 50, 1),
                               shape: RoundedRectangleBorder(
@@ -225,7 +229,7 @@ class _LoginState extends State<Login> {
                                       onPressed: () =>
                                           Navigator.popAndPushNamed(
                                               context, "/Register"),
-                                      child: Text("Create Account",
+                                      child: Text("用户注册",
                                           style: TextStyle(
                                               fontSize: 12.5,
                                               color: Colors.white54))),
@@ -233,7 +237,7 @@ class _LoginState extends State<Login> {
                                       onPressed: () =>
                                           Navigator.popAndPushNamed(
                                               context, "/ForgetPassword"),
-                                      child: Text("Need Help?",
+                                      child: Text("忘记密码",
                                           style: TextStyle(
                                               fontSize: 12.5,
                                               color: Colors.white54)))

@@ -62,6 +62,34 @@ class _CommentsState extends State<Comments>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        //Drawer
+        drawerScrimColor: Colors.transparent,
+        drawer: getDrawer(context),
+        //App Bar
+        appBar: AppBar(
+            leading: Builder(
+              builder: (context) => Tooltip(
+                message: "Open navigation menu",
+                child: GestureDetector(
+                    child: Image.asset(imagesPath + "menu.png",
+                        semanticLabel: "App Logo", scale: appBarIconScale),
+                    onTap: () => Scaffold.of(context).openDrawer()),
+              ),
+            ), //Menu
+            title: Image.asset(imagesPath + "logo.png",
+                scale: appBarIconScale), //Logo
+            centerTitle: true,
+            actions: <Widget>[
+              Tooltip(
+                  message: "Search",
+                  child: GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                          child: Image.asset(imagesPath + "search.png",
+                              scale: appBarIconScale))))
+            ],
+            elevation: .0,
+            backgroundColor: appMainColor),
         body: Container(
             width: screenSize(window).width,
             height: screenSize(window).height,
@@ -97,7 +125,7 @@ class _CommentsState extends State<Comments>
                                                   0;
                                             });
                                           },
-                                          child: Text("Best",
+                                          child: Text("体温",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 12.0)),
@@ -116,7 +144,7 @@ class _CommentsState extends State<Comments>
                                                   1;
                                             });
                                           },
-                                          child: Text("Newest",
+                                          child: Text("历史记录",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 12.0)),
@@ -135,7 +163,7 @@ class _CommentsState extends State<Comments>
                                                   2;
                                             });
                                           },
-                                          child: Text("Oldest",
+                                          child: Text("异常体温",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 12.0)),
