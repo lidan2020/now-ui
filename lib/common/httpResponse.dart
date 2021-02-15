@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:Project_News/database/app_database.dart';
+import 'package:Project_News/db/BaseDBProvider.dart';
 import 'package:Project_News/model/temperatureData.dart';
 import 'package:Project_News/model/user.dart';
 import 'package:http/http.dart' as http;
@@ -24,19 +26,20 @@ var UserList = [
 ];
 
 // 警员用户基本信息取得
-Future<UserData> fetchUserData() async {
+Future<User> fetchUserData() async {
   final response = await http.get('http://118.89.224.59:20005/jcys/shiot/list');
 
   if (response.statusCode == 200) {
-    return UserData.fromJson(jsonDecode(response.body));
+    return User.fromJson(jsonDecode(response.body));
   } else {
     throw Exception('警员基本数据通信失败');
   }
 }
 
 // 警员体温信息取得
-Future<GetTemperatureData> fetchTemperatureData(String count) async {
+Future<GetTemperatureData> fetchTemperature() async {
   GetTemperatureData gd;
+  List<Temperature> _wdList = new List();
 
   int i = 0;
   UserList.forEach((uCode) async {
@@ -46,7 +49,7 @@ Future<GetTemperatureData> fetchTemperatureData(String count) async {
             '?offset=0&cnt=1');
 
     if (response.statusCode == 200) {
-      TemperatureData td = new TemperatureData();
+      Temperature td;
       if (i == 0) {
         gd = GetTemperatureData.fromJson(jsonDecode(response.body));
         i++;
@@ -55,19 +58,23 @@ Future<GetTemperatureData> fetchTemperatureData(String count) async {
       }
 
       if (td != null) {
-        gd.data.add(td);
+        _wdList.add(td);
       }
     } else {
       throw Exception('警员体温数据通信失败');
     }
   });
 
+  _wdList.forEach((onValue) {
+    gd.data.add(onValue);
+  });
+
   return gd;
 }
 
-Future<GetTemperatureData> fetchTemperatureDataList(String sn) async {
+Future<GetTemperatureData> fetchTemperatureList(String sn) async {
   final response = await http.get(
-      'http://118.89.224.59:20005/jcys/shiot/get/689464703098034?offset=0&cnt=1');
+      'http://118.89.224.59:20005/jcys/shiot/get/' + sn + '?offset=0&cnt=1');
 
   if (response.statusCode == 200) {
     return GetTemperatureData.fromJson(jsonDecode(response.body));
@@ -77,29 +84,87 @@ Future<GetTemperatureData> fetchTemperatureDataList(String sn) async {
 }
 
 // 当前体温取得
-List<TemperatureData> getUserList() {
-  List<TemperatureData> userList = new List<TemperatureData>();
+getUserList(int rowId) async {
+  List<Temperature> wdList = new List<Temperature>();
+  String uCode = UserList[rowId];
 
-  UserList.forEach((uCode) async {
-    final response = await http.get(
-        'http://118.89.224.59:20005/jcys/shiot/get/' +
-            uCode +
-            '?offset=0&cnt=1');
+  // UserList.forEach((uCode) async {
+  final response = await http.get(
+      'http://118.89.224.59:20005/jcys/shiot/get/' + uCode + '?offset=0&cnt=1');
 
-    if (response.statusCode == 200) {
-      TemperatureData td = new TemperatureData();
+  if (response.statusCode == 200) {
+    Temperature td;
 
-      if (GetTemperatureData.fromJson(jsonDecode(response.body)).data != null) {
-        td = GetTemperatureData.fromJson(jsonDecode(response.body)).data[0];
-      }
-
-      if (td != null) {
-        userList.add(td);
-      }
-    } else {
-      throw Exception('警员体温数据通信失败');
+    if (GetTemperatureData.fromJson(jsonDecode(response.body)).data != null) {
+      td = GetTemperatureData.fromJson(jsonDecode(response.body)).data[0];
     }
-  });
 
-  return userList;
+    if (td != null) {
+      //td.wdid = int.parse(td.id);
+      //wdList.add(td);
+      // 数据库温度写入
+      //DBManager().addWdData(td);
+      //==============================
+      print("通信详细数据");
+      print("id:[" +
+          td.id +
+          "] sn:[" +
+          td.sn +
+          "] wd:[" +
+          td.wd +
+          "] time:[" +
+          td.pTime +
+          "]");
+      final database = $FloorAppDatabase.databaseBuilder().build();
+      database.then((onValu) {
+        onValu.temperatureDao.getMaxTemperature(td.id).then((onValue) {
+          print("============================================");
+          print("数据库中存在的数据");
+          print("id:[" +
+              onValue.id +
+              "] sn:[" +
+              onValue.sn +
+              "] wd:[" +
+              onValue.wd +
+              "] time:[" +
+              onValue.pTime +
+              "]");
+          print("============================================");
+          if (onValue == null) {
+            onValu.temperatureDao.insertTemperature(td);
+            // 修改现有人员温度
+            onValu.userDao.updateUser(td.sn, td.wd, td.pTime);
+            print("============================================");
+            print("添加温度，修改现有人员温度");
+            print("============================================");
+          }
+        });
+      }).catchError((e) {
+        print(e);
+      });
+      //==============================
+    }
+  } else {
+    throw Exception('警员体温数据通信失败');
+  }
+  //});
+
+  return wdList;
 }
+
+// 网络数据通信，添加数据库
+// _saveHttpWdCall(Temperature temData) {
+//   DBManager().addWdData(temData);
+// }
+// _saveHttpWdCall(Temperature temData) {
+//   final database = $FloorAppDatabase.databaseBuilder().build();
+//   database.then((onValu) {
+//     onValu.temperatureDao.getMaxTemperature(temData.sn).then((onValue) {
+//       if (onValue != null) {
+//         if (onValue.id != temData.id) {
+//           onValu.temperatureDao.insertTemperature(temData);
+//         }
+//       }
+//     });
+//   });
+// }

@@ -67,11 +67,11 @@ class _OverviewState extends State<Overview> {
     super.initState();
 
     // 访问服务器体温数据
-    _userList = getUserList();
-    _getTemperatureList = fetchTemperatureDataList("");
+    //_userList = getUserList();
+    _getTemperatureList = fetchTemperatureList("");
 
     ///循环执行
-    _timer = Timer.periodic(Duration(seconds: 60), (Timer t) => addValue());
+    //_timer = Timer.periodic(Duration(seconds: 60), (Timer t) => addValue());
     // ///间隔1秒
     // _timer = Timer.periodic(Duration(milliseconds: 1000), (timer) {
     //   ///自增
@@ -100,7 +100,7 @@ class _OverviewState extends State<Overview> {
   //================================================
   // 温度显示 方法实现
   Future<GetTemperatureData> _getTemperatureList;
-  List<TemperatureData> _userList;
+  List<Temperature> _userList;
 
   //温度定时访问
   Timer _timer;
@@ -114,11 +114,11 @@ class _OverviewState extends State<Overview> {
   // userData     : 警员名称信息
   // temperature  : 警员体温
   // pTime        : 测温时间
-  List<Widget> _userListView(List<TemperatureData> temperatureDataList) {
+  List<Widget> _userListView(List<Temperature> temperatureDataList) {
     return temperatureDataList
         .map((f) => _getChannelsPercents(
             channel: f.sn,
-            percent: f.wd <= 0 ? 0 : f.wd,
+            percent: double.parse(f.wd) <= 0 ? 0 : double.parse(f.wd),
             percentString: f.wd.toString(),
             pTime: f.pTime))
         .toList();
@@ -127,8 +127,8 @@ class _OverviewState extends State<Overview> {
   void addValue() {
     setState(() {
       // 访问服务器体温数据
-      _userList = getUserList();
-      _getTemperatureList = fetchTemperatureDataList("689464703098034");
+      //_userList = getUserList();
+      _getTemperatureList = fetchTemperatureList("689464703098034");
 
       //curentTimer++;
     });

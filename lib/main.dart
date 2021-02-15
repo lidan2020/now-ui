@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:core';
+import 'package:Project_News/database/app_database.dart';
 import 'package:Project_News/ui/mainWd.dart';
 import 'package:Project_News/ui/story/comments.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +44,7 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     super.initState();
+    final database = $FloorAppDatabase.databaseBuilder().build();
     //_getUserOnBoard();
     loggedIn = true;
   }

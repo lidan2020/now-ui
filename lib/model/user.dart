@@ -1,28 +1,27 @@
-// 警员基本信息类
-class UserData {
-  final int code;
-  final int count;
-  final List<SnData> data;
-  final String msg;
+/// 警员基本信息类
+import 'package:flutter/cupertino.dart';
 
-  UserData({this.code, this.count, this.data, this.msg});
+class User {
+  final int id;
+  final String code;
+  final String name;
+  final String sn;
+  final String image;
+  String wd;
+  String time;
 
-  factory UserData.fromJson(Map<String, dynamic> json) {
-    // 人员数据解析
-    var objData = json['data'] as List;
-    List<SnData> dataList =
-        objData.map((value) => SnData.fromJson(value)).toList();
+  //User(int row, {this.id,this.code, this.name, this.sn, this.image});
+  User(this.id, this.code, this.name, this.sn, this.image, this.wd, this.time);
 
-    // 人员数据取得
-    return UserData(
-        code: json['code'],
-        count: json['count'],
-        data: dataList,
-        msg: json['msg']);
+  factory User.fromJson(Map<String, dynamic> json) {
+    /// 人员数据解析
+    /// 人员数据取得
+    return User(0, json['code'], json['name'], json['sn'], json['image'], "0.0",
+        "00:00");
   }
 }
 
-// 人员基本情报
+/// 人员基本情报
 class SnData {
   final String sn;
 
